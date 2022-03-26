@@ -1,6 +1,6 @@
 package main
 
-import "github.com/davyxu/golog"
+import "github.com/vvisun/golog"
 
 var log = golog.New("test2")
 

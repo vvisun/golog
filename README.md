@@ -16,7 +16,7 @@
 
 # 安装方法
 
-	go get github.com/davyxu/golog
+	go get github.com/vvisun/golog
 
 # 使用方法
 
