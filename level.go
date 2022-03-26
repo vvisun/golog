@@ -1,6 +1,9 @@
 package golog
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 type Level int
 
@@ -9,6 +12,7 @@ const (
 	Level_Info
 	Level_Warn
 	Level_Error
+	Level_Fatal
 )
 
 var levelString = [...]string{
@@ -16,6 +20,7 @@ var levelString = [...]string{
 	"[INFO]",
 	"[WARN]",
 	"[ERRO]",
+	"[FATAL]",
 }
 
 func str2loglevel(level string) Level {
@@ -29,6 +34,8 @@ func str2loglevel(level string) Level {
 		return Level_Warn
 	case "error", "err":
 		return Level_Error
+	case "fatal":
+		return Level_Fatal
 	}
 
 	return Level_Debug
@@ -61,6 +68,11 @@ func (self *Logger) Warnf(format string, v ...interface{}) {
 func (self *Logger) Errorf(format string, v ...interface{}) {
 
 	self.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
+}
+
+func (self *Logger) Fatalf(format string, v ...interface{}) {
+	self.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
+	os.Exit(1)
 }
 
 func (self *Logger) Debugln(v ...interface{}) {
