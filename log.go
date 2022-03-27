@@ -58,6 +58,7 @@ func getPackageName() string {
 	raw := runtime.FuncForPC(pc).Name()
 	return strings.TrimSuffix(raw, ".init.ializers")
 }
+
 func New(name string) *Logger {
 
 	l := &Logger{
@@ -75,115 +76,112 @@ func New(name string) *Logger {
 	return l
 }
 
-func (self *Logger) EnableColor(v bool) {
-	self.mu.Lock()
-	self.enableColor = v
-	self.mu.Unlock()
+func (slf *Logger) EnableColor(v bool) {
+	slf.mu.Lock()
+	slf.enableColor = v
+	slf.mu.Unlock()
 }
 
-func (self *Logger) SetParts(f ...PartFunc) {
-
-	self.parts = []PartFunc{logPart_ColorBegin}
-	self.parts = append(self.parts, f...)
-	self.parts = append(self.parts, logPart_Text, logPart_ColorEnd, logPart_Line)
+func (slf *Logger) SetParts(f ...PartFunc) {
+	slf.parts = []PartFunc{logPart_ColorBegin}
+	slf.parts = append(slf.parts, f...)
+	slf.parts = append(slf.parts, logPart_Text, logPart_ColorEnd, logPart_Line)
 }
 
-func (self *Logger) SetFullParts(f ...PartFunc) {
-
-	self.parts = f
+func (slf *Logger) SetFullParts(f ...PartFunc) {
+	slf.parts = f
 }
 
 // 二次开发接口
-func (self *Logger) WriteRawString(s string) {
-	self.buf = append(self.buf, s...)
+func (slf *Logger) WriteRawString(s string) {
+	slf.buf = append(slf.buf, s...)
 }
 
-func (self *Logger) WriteRawByte(b byte) {
-	self.buf = append(self.buf, b)
+func (slf *Logger) WriteRawByte(b byte) {
+	slf.buf = append(slf.buf, b)
 }
 
-func (self *Logger) WriteRawByteSlice(b []byte) {
-	self.buf = append(self.buf, b...)
+func (slf *Logger) WriteRawByteSlice(b []byte) {
+	slf.buf = append(slf.buf, b...)
 }
 
-func (self *Logger) Name() string {
-	return self.name
+func (slf *Logger) Name() string {
+	return slf.name
 }
 
-func (self *Logger) SetUserData(data interface{}) {
-	self.userData = data
+func (slf *Logger) SetUserData(data interface{}) {
+	slf.userData = data
 }
 
-func (self *Logger) UserData() interface{} {
-	return self.userData
+func (slf *Logger) UserData() interface{} {
+	return slf.userData
 }
 
-func (self *Logger) PkgName() string {
-	return self.pkgName
+func (slf *Logger) PkgName() string {
+	return slf.pkgName
 }
 
-func (self *Logger) Buff() []byte {
-	return self.buf
-}
-
-// 仅供LogPart访问
-func (self *Logger) Text() string {
-	return self.currText
+func (slf *Logger) Buff() []byte {
+	return slf.buf
 }
 
 // 仅供LogPart访问
-func (self *Logger) Context() interface{} {
-	return self.currContext
+func (slf *Logger) Text() string {
+	return slf.currText
 }
 
-func (self *Logger) LogText(level Level, text string, ctx interface{}) {
+// 仅供LogPart访问
+func (slf *Logger) Context() interface{} {
+	return slf.currContext
+}
+
+func (slf *Logger) LogText(level Level, text string, ctx interface{}) {
 
 	// 防止日志并发打印导致的文本错位
-	self.mu.Lock()
-	defer self.mu.Unlock()
+	slf.mu.Lock()
+	defer slf.mu.Unlock()
 
-	self.currLevel = level
-	self.currText = text
-	self.currContext = ctx
+	slf.currLevel = level
+	slf.currText = text
+	slf.currContext = ctx
 
-	defer self.resetState()
+	defer slf.resetState()
 
-	if self.currLevel < self.level || !self.currCondition {
+	if slf.currLevel < slf.level || !slf.currCondition {
 		return
 	}
 
-	self.selectColorByText()
-	self.selectColorByLevel()
+	slf.selectColorByText()
+	slf.selectColorByLevel()
 
-	self.buf = self.buf[:0]
+	slf.buf = slf.buf[:0]
 
-	for _, p := range self.parts {
-		p(self)
+	for _, p := range slf.parts {
+		p(slf)
 	}
 
-	if self.output != nil {
-		self.output.Write(self.buf)
+	if slf.output != nil {
+		slf.output.Write(slf.buf)
 	} else {
-		globalWrite(self.buf)
+		globalWrite(slf.buf)
 	}
 
 }
 
-func (self *Logger) Condition(value bool) *Logger {
+func (slf *Logger) Condition(value bool) *Logger {
+	slf.mu.Lock()
+	slf.currCondition = value
+	slf.mu.Unlock()
 
-	self.mu.Lock()
-	self.currCondition = value
-	self.mu.Unlock()
-
-	return self
+	return slf
 }
 
-func (self *Logger) resetState() {
-	self.currColor = NoColor
-	self.currCondition = true
-	self.currContext = nil
+func (slf *Logger) resetState() {
+	slf.currColor = NoColor
+	slf.currCondition = true
+	slf.currContext = nil
 }
 
-func (self *Logger) IsDebugEnabled() bool {
-	return self.level == Level_Debug
+func (slf *Logger) IsDebugEnabled() bool {
+	return slf.level == Level_Debug
 }

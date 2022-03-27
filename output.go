@@ -22,6 +22,7 @@ var (
 	logFileHandle        *os.File                     // 当前写入的日志文件句柄
 	currFileIndex        int                          // 当前日志索引号
 	onCreateLogFile      CreateLogFileEventFunc
+	globalColorable      bool = true
 )
 
 // 获取当前日志索引号
@@ -45,6 +46,7 @@ func GetOutputFileOption() OutputFileOption {
 func SetOutputToFile(filename string, optList ...interface{}) error {
 
 	globalOutputFileName = filename
+	globalColorable = false
 
 	// 自动创建日志目录
 	logDir := filepath.Dir(globalOutputFileName)
@@ -114,12 +116,12 @@ func SetCreateLogEvent(callback CreateLogFileEventFunc) {
 }
 
 // 设置本日志的输出, 单个日志设置输出时, 优先度高于全局
-func (self *Logger) SetOutptut(writer io.Writer) {
-	self.output = writer
+func (slf *Logger) SetOutptut(writer io.Writer) {
+	slf.output = writer
 }
 
-func (self *Logger) GetOutput() io.Writer {
-	return self.output
+func (slf *Logger) GetOutput() io.Writer {
+	return slf.output
 }
 
 func globalWrite(b []byte) {

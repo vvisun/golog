@@ -9,7 +9,7 @@ import (
 func TestFileCreate(t *testing.T) {
 
 	l := New("test")
-	SetOutputToFile("tt.log", OutputFileOption{
+	SetOutputToFile("logs/tt.log", OutputFileOption{
 		MaxFileSize: 1000,
 	})
 

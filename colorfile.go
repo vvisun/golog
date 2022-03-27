@@ -16,9 +16,9 @@ type ColorFile struct {
 	Rule []*ColorMatch
 }
 
-func (self *ColorFile) ColorFromText(text string) Color {
+func (slf *ColorFile) ColorFromText(text string) Color {
 
-	for _, rule := range self.Rule {
+	for _, rule := range slf.Rule {
 		if strings.Contains(text, rule.Text) {
 			return rule.c
 		}
@@ -27,14 +27,14 @@ func (self *ColorFile) ColorFromText(text string) Color {
 	return NoColor
 }
 
-func (self *ColorFile) Load(data string) error {
+func (slf *ColorFile) Load(data string) error {
 
-	err := json.Unmarshal([]byte(data), self)
+	err := json.Unmarshal([]byte(data), slf)
 	if err != nil {
 		return err
 	}
 
-	for _, rule := range self.Rule {
+	for _, rule := range slf.Rule {
 
 		rule.c = matchColor(rule.Color)
 

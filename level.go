@@ -20,7 +20,7 @@ var levelString = [...]string{
 	"[INFO]",
 	"[WARN]",
 	"[ERRO]",
-	"[FATAL]",
+	"[FATA]",
 }
 
 func str2loglevel(level string) Level {
@@ -43,71 +43,61 @@ func str2loglevel(level string) Level {
 
 // 通过字符串设置某一类日志的级别
 func SetLevelByString(loggerName string, level string) error {
-
 	return VisitLogger(loggerName, func(l *Logger) bool {
 		l.SetLevelByString(level)
 		return true
 	})
 }
 
-func (self *Logger) Debugf(format string, v ...interface{}) {
-
-	self.LogText(Level_Debug, fmt.Sprintf(format, v...), nil)
+func (slf *Logger) Debugf(format string, v ...interface{}) {
+	slf.LogText(Level_Debug, fmt.Sprintf(format, v...), nil)
 }
 
-func (self *Logger) Infof(format string, v ...interface{}) {
-
-	self.LogText(Level_Info, fmt.Sprintf(format, v...), nil)
+func (slf *Logger) Infof(format string, v ...interface{}) {
+	slf.LogText(Level_Info, fmt.Sprintf(format, v...), nil)
 }
 
-func (self *Logger) Warnf(format string, v ...interface{}) {
-
-	self.LogText(Level_Warn, fmt.Sprintf(format, v...), nil)
+func (slf *Logger) Warnf(format string, v ...interface{}) {
+	slf.LogText(Level_Warn, fmt.Sprintf(format, v...), nil)
 }
 
-func (self *Logger) Errorf(format string, v ...interface{}) {
-
-	self.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
+func (slf *Logger) Errorf(format string, v ...interface{}) {
+	slf.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
 }
 
-func (self *Logger) Fatalf(format string, v ...interface{}) {
-	self.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
+func (slf *Logger) Fatalf(format string, v ...interface{}) {
+	slf.LogText(Level_Error, fmt.Sprintf(format, v...), nil)
 	os.Exit(1)
 }
 
-func (self *Logger) Debugln(v ...interface{}) {
-
-	self.LogText(Level_Debug, fmt.Sprintln(v...), nil)
+func (slf *Logger) Debugln(v ...interface{}) {
+	slf.LogText(Level_Debug, fmt.Sprintln(v...), nil)
 }
 
-func (self *Logger) Infoln(v ...interface{}) {
-
-	self.LogText(Level_Info, fmt.Sprintln(v...), nil)
+func (slf *Logger) Infoln(v ...interface{}) {
+	slf.LogText(Level_Info, fmt.Sprintln(v...), nil)
 }
 
-func (self *Logger) Warnln(v ...interface{}) {
-
-	self.LogText(Level_Warn, fmt.Sprintln(v...), nil)
+func (slf *Logger) Warnln(v ...interface{}) {
+	slf.LogText(Level_Warn, fmt.Sprintln(v...), nil)
 }
 
-func (self *Logger) Errorln(v ...interface{}) {
-	self.LogText(Level_Error, fmt.Sprintln(v...), nil)
+func (slf *Logger) Errorln(v ...interface{}) {
+	slf.LogText(Level_Error, fmt.Sprintln(v...), nil)
 }
 
-func (self *Logger) SetLevelByString(level string) {
-
-	self.SetLevel(str2loglevel(level))
-
+func (slf *Logger) SetLevelByString(level string) {
+	slf.SetLevel(str2loglevel(level))
 }
 
-func (self *Logger) SetLevel(lv Level) {
-	self.level = lv
+func (slf *Logger) SetLevel(lv Level) {
+	slf.level = lv
 }
 
-func (self *Logger) Level() Level {
-	return self.level
+func (slf *Logger) Level() Level {
+	return slf.level
 }
 
-func (self *Logger) CurrLevelString() string {
-	return levelString[self.currLevel]
+func (slf *Logger) CurrLevelString() string {
+	return levelString[slf.currLevel]
 }

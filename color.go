@@ -107,32 +107,31 @@ func SetColorFile(loggerName string, colorFileName string) error {
 	return SetColorDefine(loggerName, string(data))
 }
 
-func (self *Logger) SetColor(name string) *Logger {
-	self.mu.Lock()
-	self.currColor = matchColor(name)
-	self.mu.Unlock()
+func (slf *Logger) SetColor(name string) *Logger {
+	slf.mu.Lock()
+	slf.currColor = matchColor(name)
+	slf.mu.Unlock()
 
-	return self
+	return slf
 }
 
 // 注意, 加色只能在Gogland的main方式启用, Test方式无法加色
-func (self *Logger) SetColorFile(file *ColorFile) {
-	self.colorFile = file
+func (slf *Logger) SetColorFile(file *ColorFile) {
+	slf.colorFile = file
 }
 
-func (self *Logger) selectColorByLevel() {
+func (slf *Logger) selectColorByLevel() {
 
-	if levelColor := colorFromLevel(self.currLevel); levelColor != NoColor {
-		self.currColor = levelColor
+	if levelColor := colorFromLevel(slf.currLevel); levelColor != NoColor {
+		slf.currColor = levelColor
 	}
 
 }
 
-func (self *Logger) selectColorByText() {
+func (slf *Logger) selectColorByText() {
 
-	if self.enableColor && self.colorFile != nil && self.currColor == NoColor {
-		self.currColor = self.colorFile.ColorFromText(self.currText)
+	if slf.enableColor && globalColorable && slf.colorFile != nil && slf.currColor == NoColor {
+		slf.currColor = slf.colorFile.ColorFromText(slf.currText)
 	}
 
-	return
 }
