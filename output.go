@@ -5,8 +5,10 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 type OutputFileOption struct {
@@ -187,14 +189,21 @@ func checkFileCreate() {
 
 }
 
-func foundUseableName(originName string) (ret string) {
+func splidFilename(fullFilename string) (fname string, fsufix string) {
+	filenameWithSuffix := fullFilename // path.Base(fullFilename)
+	fsufix = path.Ext(filenameWithSuffix)
+	fname = strings.TrimSuffix(filenameWithSuffix, fsufix)
+	return
+}
 
+func foundUseableName(originName string) (ret string) {
+	fname, fsufix := splidFilename(originName)
 	for i := currFileIndex; ; i++ {
 
 		if i == 0 {
 			ret = originName
 		} else {
-			ret = fmt.Sprintf("%s.%d", originName, i)
+			ret = fmt.Sprintf("%s%d%s", fname, i, fsufix)
 		}
 
 		if _, err := os.Stat(ret); err != nil {

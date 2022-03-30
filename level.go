@@ -119,8 +119,9 @@ func (slf *Logger) SetLevelByString(level string) {
 	slf.SetLevel(str2loglevel(level))
 }
 
-func (slf *Logger) SetLevel(lv Level) {
+func (slf *Logger) SetLevel(lv Level) *Logger {
 	slf.level = lv
+	return slf
 }
 
 func (slf *Logger) Level() Level {
